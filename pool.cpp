@@ -28,15 +28,15 @@ void Pool::worker_loop() {
     std::function<void()> task;
     {
       std::unique_lock<std::mutex> lock(this->m_queue_mutex);
-      if (this->m_queue.empty()) {
+      if (this->m_job_queue.empty()) {
         if (this->m_done) {
           break;
         }
         std::this_thread::yield();
         continue;
       }
-      task = this->m_queue.front();
-      this->m_queue.pop();
+      task = this->m_job_queue.front();
+      this->m_job_queue.pop();
     }
     task();
   }
@@ -44,6 +44,6 @@ void Pool::worker_loop() {
 
 void Pool::push_job(std::function<void()> f) {
   std::unique_lock<std::mutex> lock(this->m_queue_mutex);
-  this->m_queue.push(std::function<void()>(f));
+  this->m_job_queue.push(std::function<void()>(f));
 }
 } // namespace dirstat

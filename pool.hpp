@@ -8,8 +8,8 @@ namespace dirstat {
     class Pool {
 
         std::atomic_bool m_done;
-        std::queue<std::function<void()>> m_queue;
         std::mutex m_queue_mutex;
+        std::queue<std::function<void()>> m_job_queue;
         std::vector<std::thread> workers;
 
         public:
