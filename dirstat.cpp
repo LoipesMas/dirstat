@@ -12,13 +12,17 @@ void process_file(std::filesystem::path file_path,
   std::uint32_t line_count = 0;
   std::uint64_t word_count = 0;
   std::uint64_t char_count = 0;
+
+  bool prev_space = false;
+
   while (std::getline(file, line)) {
     if (!line.empty())
       ++word_count;
     for (auto c : line) {
       ++char_count;
-      if (c == ' ')
+      if (c == ' ' && !prev_space)
         ++word_count;
+      prev_space = c == ' ';
     }
     ++line_count;
   }
