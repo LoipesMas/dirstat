@@ -49,11 +49,4 @@ void run_in_path(std::filesystem::path path, std::uint64_t *file_count,
       ++*file_count;
     }
 }
-void run_in_cur_path(std::uint64_t *file_count,
-                     std::atomic_uint64_t *total_line_count,
-                     std::atomic_uint64_t *total_word_count,
-                     std::atomic_uint64_t *total_char_count) {
-  run_in_path(std::filesystem::current_path(), file_count, total_line_count,
-              total_word_count, total_char_count);
-}
 } // namespace dirstat
