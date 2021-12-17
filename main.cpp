@@ -30,7 +30,7 @@ int main(int argc, char *argv[]) {
   std::atomic_uint64_t total_word_count = 0;
   std::atomic_uint64_t total_char_count = 0;
 
-  dirstat::run_in_path(path, &file_count, &total_line_count, &total_word_count,
+  dirstat::run_in_path(path, file_count, &total_line_count, &total_word_count,
                        &total_char_count);
 
   std::cout << "File count: " << file_count << std::endl;

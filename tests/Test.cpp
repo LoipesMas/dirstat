@@ -35,7 +35,7 @@ TEST_F(Test, ProccessFile2) {
   EXPECT_EQ(65535, total_char_count.load());
 }
 TEST_F(Test, ProcessDirectory) {
-  dirstat::run_in_path(cur_path, &file_count, &total_line_count,
+  dirstat::run_in_path(cur_path, file_count, &total_line_count,
                        &total_word_count, &total_char_count);
   EXPECT_EQ(3, file_count);
   EXPECT_EQ(33, total_line_count.load());
