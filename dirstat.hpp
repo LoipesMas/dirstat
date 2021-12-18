@@ -1,20 +1,23 @@
 #include <filesystem>
 #include <atomic>
 #include <fstream>
+#include <mutex>
 
 namespace dirstat {
+struct Counts {
+    std::mutex mutex;
+    std::uint64_t file_count;
+    std::uint64_t line_count;
+    std::uint64_t word_count;
+    std::uint64_t char_count;
+};
 
 // Processes file from given path.  
 //  Counts lines, words, characters and adds them to given atomics.
 void process_file(std::filesystem::path file_path,
-                  std::atomic_uint64_t *total_line_count,
-                  std::atomic_uint64_t *total_word_count,
-                  std::atomic_uint64_t *total_char_count);
+                  Counts *counts);
 
 // Runs `process_file` on all files in given directory (recursively).
 void run_in_path(std::filesystem::path path,
-                  std::uint64_t &file_count,
-                  std::atomic_uint64_t *total_line_count,
-                  std::atomic_uint64_t *total_word_count,
-                  std::atomic_uint64_t *total_char_count);
+                  Counts *counts);
 } // namespace dirstat

@@ -2,10 +2,7 @@
 #include "pool.hpp"
 
 namespace dirstat {
-void process_file(std::filesystem::path file_path,
-                  std::atomic_uint64_t *total_line_count,
-                  std::atomic_uint64_t *total_word_count,
-                  std::atomic_uint64_t *total_char_count) {
+void process_file(std::filesystem::path file_path, dirstat::Counts *counts) {
   std::fstream file;
   file.open(file_path.string(), std::ios::in);
   std::string line;
@@ -28,26 +25,22 @@ void process_file(std::filesystem::path file_path,
   }
 
   file.close();
-  *total_line_count += line_count;
-  *total_word_count += word_count;
-  *total_char_count += char_count;
+
+  std::unique_lock<std::mutex> lock(counts->mutex);
+  counts->line_count += line_count;
+  counts->word_count += word_count;
+  counts->char_count += char_count;
 }
 
-void run_in_path(std::filesystem::path path, std::uint64_t &file_count,
-                 std::atomic_uint64_t *total_line_count,
-                 std::atomic_uint64_t *total_word_count,
-                 std::atomic_uint64_t *total_char_count) {
+void run_in_path(std::filesystem::path path, dirstat::Counts *counts) {
   dirstat::Pool pool;
   for (auto const &dir_entry :
        std::filesystem::recursive_directory_iterator{path}) {
     if (!dir_entry.is_regular_file())
       continue;
 
-    pool.push_job([=]() {
-      dirstat::process_file(dir_entry.path(), total_line_count,
-                            total_word_count, total_char_count);
-    });
-    ++file_count;
+    pool.push_job([=]() { dirstat::process_file(dir_entry.path(), counts); });
+    counts->file_count++;
   }
 }
 } // namespace dirstat

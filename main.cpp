@@ -25,16 +25,16 @@ int main(int argc, char *argv[]) {
       return 2;
     }
   }
-  std::uint64_t file_count = 0;
-  std::atomic_uint64_t total_line_count = 0;
-  std::atomic_uint64_t total_word_count = 0;
-  std::atomic_uint64_t total_char_count = 0;
+  dirstat::Counts counts;
+  counts.file_count = 0;
+  counts.line_count = 0;
+  counts.word_count = 0;
+  counts.char_count = 0;
 
-  dirstat::run_in_path(path, file_count, &total_line_count, &total_word_count,
-                       &total_char_count);
+  dirstat::run_in_path(path, &counts);
 
-  std::cout << "File count: " << file_count << std::endl;
-  std::cout << "Line count: " << total_line_count.load() << std::endl;
-  std::cout << "Word count: " << total_word_count.load() << std::endl;
-  std::cout << "Char count: " << total_char_count.load() << std::endl;
+  std::cout << "File count: " << counts.file_count << std::endl;
+  std::cout << "Line count: " << counts.line_count << std::endl;
+  std::cout << "Word count: " << counts.word_count << std::endl;
+  std::cout << "Char count: " << counts.char_count << std::endl;
 }
