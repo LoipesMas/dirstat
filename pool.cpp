@@ -4,6 +4,7 @@
 
 namespace dirstat {
 Pool::Pool() : m_done(false) {
+  // Creates one worker per available thread
   int const thread_count = std::thread::hardware_concurrency();
   try {
     for (int i = 0; i < thread_count; ++i) {
@@ -17,6 +18,7 @@ Pool::Pool() : m_done(false) {
 
 Pool::~Pool() {
   this->m_done = true;
+  // Wait for all workers to finish
   for (auto &t : this->workers) {
     if (t.joinable())
       t.join();
@@ -25,20 +27,26 @@ Pool::~Pool() {
 
 void Pool::worker_loop() {
   while (true) {
-    std::function<void()> task;
+    std::function<void()> job;
     {
+      // Lock job queue
       std::unique_lock<std::mutex> lock(this->m_queue_mutex);
+      // Check if task is ready
       if (this->m_job_queue.empty()) {
+        // If empty and done, quit
         if (this->m_done) {
           break;
         }
+        // If not done, wait
         std::this_thread::yield();
         continue;
       }
-      task = this->m_job_queue.front();
+      // Get new job
+      job = this->m_job_queue.front();
       this->m_job_queue.pop();
     }
-    task();
+    // Do job
+    job();
   }
 }
 

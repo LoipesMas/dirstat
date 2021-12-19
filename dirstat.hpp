@@ -4,6 +4,7 @@
 #include <mutex>
 
 namespace dirstat {
+// Holds all counts
 struct Counts {
     std::mutex mutex;
     std::uint64_t file_count;

@@ -25,6 +25,7 @@ int main(int argc, char *argv[]) {
       return 2;
     }
   }
+
   dirstat::Counts counts;
   counts.file_count = 0;
   counts.line_count = 0;
